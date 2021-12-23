@@ -7,13 +7,13 @@ import useBaseUrl from "@docusaurus/useBaseUrl";
 For deposit and withdrawal operations on Godwoken, two options are available:
 
 1. Using a UI deposit or withdrawal provided by [yokaiswap](https://testnet.yokaiswap.com/bridge/deposit) to perform the relevant actions.
-2. Using `gw-tools` deposit or withdrawal to perform the relevant actions, and the unlocking operation so as to complete the withdrawal process.
+2. Using `gw-tools` deposit or withdrawal to perform the relevant actions, and the unlocking operation to complete the withdrawal process.
 
 ---
 
 ## Using GW-tools to Deposit
 
-To `deposit` CKBs onto Layer 2, user need to execute the `gw-tools` deposit command in the command line. If the user applied the quick mode with godwoken-kicker, which already has a deposit function, the user can carry out the deposit operation directly on http://localhost:6100/ .
+To `deposit` CKBs onto Layer 2, users need to execute the `gw-tools` deposit command in the command line. If the user applied the quick mode with godwoken-kicker, which already has a deposit function, the user can carry out the deposit operation directly on http://localhost:6100/ .
 
 Use `--help` to view the available commands, and replace the variables with the values matching one's own account and information. 
 
@@ -41,7 +41,7 @@ OPTIONS:
 
 	 -o, --config-path <config-path>	The config.homl file path
 	 -e, --eth-address <eth-address>	Target eth address, calculated by private key in default
-	 -f, --fee <fee>			Transaction fee, default to 0.0001 CKB [default: 0.0001]
+	 -f, --fee <fee>			Transaction fee, by default 0.0001 CKB [default: 0.0001]
 	 -g, --godwoken-rpc-url <godwoken-rpc-url>
 	 					Godwoken jsonrpc rpc sever URL [default: http://127.0.0.1:8119]
 
@@ -59,10 +59,10 @@ For more information on the CKB RPC, refer to [CKB Wiki](https://github.com/nerv
 |command|description|
 |---|---|
 |capacity          |The amount of CKB to deposit (Unit is CKB).|
-|ckb-rpc           |CKB node URL, defaults to http://127.0.0.1:8114/|
+|ckb-rpc           |CKB node URL, by default http://127.0.0.1:8114/|
 |config-path          |The config.toml file required for godwoken to run|
 |eth-address          |Target eth address to deposit|
-|fee          |The transaction fee, this is a CKB transaction and the default rate is 0.0001 CKB.|
+|fee          |The transaction fee. This is a CKB transaction and the default rate is 0.0001 CKB.|
 |godwoken-rpc-url          |The RPC address of Godwoken, by default http://127.0.0.1:8119/|
 |privkey-path          |A file written with the private key (hex string) which is used to pay the deposit fee.|
 |scripts-deployment-path          |The JSON file path of the [script's deployment results](https://github.com/nervosnetwork/godwoken-public/blob/master/testnet/config/scripts-deploy-result.json).|
@@ -71,7 +71,7 @@ For more information on the CKB RPC, refer to [CKB Wiki](https://github.com/nerv
 
 ## Using GW-tools to Withdraw
 
-There are **two steps** to withdraw assets from layer 2 to layer 1 on Godwoken, the first step is to make a withdrawal request. In comparison to deposits, withdrawals require more time. When a withdrawal is made to layer 1, the withdrawal depends on layer 2, but layer 2 has a lower level of security and for this reason, more confirmations will be required to ensure that security remains reliable.  From the time the withdrawal is made, it takes approximately 5 days until the amount of funds is actually released at layer 1.
+There are **two steps** to withdraw assets from layer 2 to layer 1 on Godwoken. The first step is to make a withdrawal request. In comparison to deposits, withdrawals require more time. When a withdrawal is made to layer 1, the withdrawal depends on layer 2. Layer 2 has a lower level of security than layer 1. For this reason, more confirmations will be required to ensure that security remains reliable. From the time when the withdrawal is made, it takes approximately 5 days to release the funds at layer 1.
 
 To `withdraw` funds from layer 2 to layer 1, execute the following `gw-tools` withdraw command, replace the variables with the values needed:
 
@@ -108,7 +108,7 @@ OPTIONS:
 	     --scripts-deployment-path <scripts-deployment-path>	
 	 					The scripts deployment results json file path
 
-	 	 -sudt-script-hash <sudt-script-hash>	l1 sudt script hash, default for withdrawal CKB [default: 0x0000000000000000000000000000000000000000000000000000000000000000]
+	 	 -sudt-script-hash <sudt-script-hash>	l1 sudt script hash, by default for CKB withdrawal [default: 0x0000000000000000000000000000000000000000000000000000000000000000]
 
 ```
 </details>
@@ -176,7 +176,7 @@ Note: The private key you pass to `unlock` command needs to be the same as the o
 |---|---|
 |LUMOS_CONFIG_FILE		|The environment variable, filled with the lumos config json file path, or simply the name if it is on the testnet / mainnet|
 |private-key		|The private key|
-|sudt-script-args		|Layer1 sudt script args, or sudt token|
+|sudt-script-args		|Layer 1 sudt script args, or sudt token|
 |rpc 			|The rpc address of CKB, with a default value|
 |indexer-path 		|The path of Lumos indexer, with a default value, no need to fill in generally|
 
