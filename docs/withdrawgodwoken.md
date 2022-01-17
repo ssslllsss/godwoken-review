@@ -5,7 +5,9 @@ title: Withdrawing Assets from Godwoken
 
 # Withdrawing Assets from Godwoken
 
-This is a guide for withdrawing assets from Godwoken which contains two steps. In this guide, a browser with MetaMask Wallet pre-installed is required. For more information about the concepts of Godwoken and CKB, refer to [Nervos CKB](https://docs.nervos.org/docs/basics/introduction) and [Godwoken](https://docs.godwoken.io).
+This is a guide for withdrawing assets from Godwoken which contains two steps. In this guide, a browser with pre-installed MetaMask Wallet is required. 
+
+For more information about the concepts of Godwoken and CKB, refer to [Nervos CKB](https://docs.nervos.org/docs/basics/introduction) and [Godwoken](https://docs.godwoken.io).
 
 ## Prerequisites
 
@@ -19,9 +21,13 @@ The following prerequisites apply for withdrawing assets from Godwoken.
 
 ### Step 1. Submit a Withdrawal Request to Godwoken
 
-First, call the [gw_submit_withdrawal_request](https://github.com/nervosnetwork/godwoken/blob/develop/docs/RPC.md#method-gw_submit_withdrawal_request) RPC method to burn assets on layer 2 chain, and Godwoken at the same time creates assets on layer 1, which can be unlocked later by the receiver address.
+First, call the [gw_submit_withdrawal_request](https://github.com/nervosnetwork/godwoken/blob/develop/docs/RPC.md#method-gw_submit_withdrawal_request) RPC method to lock assets on layer 2 chain.
 
-Note: some information, such as the sender's layer 2 address and the receiver's layer 1 address, are required as parameters when submitting such a request. For further details see [example](https://github.com/classicalliu/gw-demos/blob/d2780e4c20824796f21a8277ea357dcce34c8e9f/src/withdrawal.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L26-L126).
+Meanwhile, Godwoken creates assets on layer 1 that can be unlocked later by the receiver address.
+
+Note: some information are required as parameters when submitting such a request, such as the sender's layer 2 address and the receiver's layer 1 address. 
+
+For further details see [example](https://github.com/classicalliu/gw-demos/blob/d2780e4c20824796f21a8277ea357dcce34c8e9f/src/withdrawal.ts?_pjax=%23js-repo-pjax-container%2C%20div%5Bitemtype%3D%22http%3A%2F%2Fschema.org%2FSoftwareSourceCode%22%5D%20main%2C%20%5Bdata-pjax-container%5D#L26-L126).
 
 ```json5
  {
@@ -49,7 +55,7 @@ Note: some information, such as the sender's layer 2 address and the receiver's 
 - `owner_lock_hash` is from the owner of layer 1
 - `account_script_hash` is from the `address` of layer 2
 
-To calculate the hashes:
+To calculate the hashes, let's look at the smaple code below:
 
 ```ts
  import { utils, helpers } from "@ckb-lumos/lumos";
@@ -79,7 +85,7 @@ To calculate the hashes:
  }
  ```
 
- The value returned should be like：
+ The value returned should look like：
 
  ```json
  {
@@ -110,7 +116,7 @@ To calculate the hashes:
  ```
 
 A cell with assets will then be created on layer 1, so as to list all the withdrawal cells that requested by the account on layer 2. 
-Here it is named `AliceL2`, and for querying one can use `@ckb-lumos/ckb-indexer`, as follows:
+Here it is named `AliceL2`, and for querying, one can use `@ckb-lumos/ckb-indexer` as follows:
 
 ```ts
  const getWithdrawalCellSearchParams = function (AliceL2: string) {
@@ -136,7 +142,9 @@ Here it is named `AliceL2`, and for querying one can use `@ckb-lumos/ckb-indexer
 
  ### Step 2. Unlock Withdrawal Cells
 
- To unlock assets previously created, it will take a while ( approximately 5 days) to unlock the assets owing to security concerns. The Quick Withdrawal will be available soon. Once the pending period is expired, the receiver can make a transaction on layer 1 to unlock the asset cell. This transaction will use the withdrawal cell as input and take another CKB cell to cover the transaction fee. Within the withdrawal cell used as output, the lock of the asset cell will be replaced with the lock of the receiver.
+To unlock the assets previously created, it will take a while (approximately 5 days) to unlock the assets owing to security concerns. The Quick Withdrawal will be available soon. //“The Quick Withdrawl”是已经确定的名字？上周跟他们沟通的时候是用的这种说法：“Faster withdrawal will be available in the near future. ”
+
+Once the pending period is expired, the receiver can make a transaction on layer 1 to unlock the asset cell. This transaction will use the withdrawal cell as input and take another CKB cell to cover the transaction fee. Within the withdrawal cell used as output, the lock of the asset cell will be replaced by the lock of the receiver.
 
 Here is an example:
 
@@ -226,9 +234,9 @@ Here is an example:
 
 #### Cell Dependencies
 
-A [CKB Cell](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#Celll) contains [Scripts](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#Script), execution of `Scripts` depends on deployed codes. [Cell dependencies](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#celldep) is used to provide the codes.
+A [CKB Cell](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#Celll) contains [Scripts](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#Script). The execution of `Scripts` depends on deployed codes. [Cell dependencies](https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0022-transaction-structure/0022-transaction-structure.md#celldep) is used to provide the codes.
 
-In this transaction, cell Deps contain `rollup cellDep`, `lock cellDep` and `withdraw cellDep`. If there are any sudt withdrawals, be sure to add `sudt cellDep`, as well as the other deps required by the receiver lock. `withdraw cellDep` and `sudt cellDep` can be obtained from some static config files, and `lock cellDep` relies on the type of lock to be used. The `omnilock` is used in the example, hence the `omnilock cellDep` is added. For the`rollup cellDep`, it needs to be obtained from the mem pool:
+In this transaction, cell Deps contain `rollup cellDep`, `lock cellDep` and `withdraw cellDep`. If there are any sudt withdrawals, be sure to add `sudt cellDep`, as well as the other deps required by the receiver lock. `withdraw cellDep` and `sudt cellDep` can be obtained from some static config files, and `lock cellDep` relies on the type of lock to be used. The `omnilock` is used in the example, hence the `omnilock cellDep` is added. For the `rollup cellDep`, it needs to be obtained from the mem pool:
 
 ```ts
  async function getRollupCellDep(): Promise<CellDep> {
